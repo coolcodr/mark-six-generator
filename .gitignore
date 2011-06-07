@@ -1,0 +1,5 @@
+lib/*
+testrun/bin
+bin/*
+build
+.DS_Store

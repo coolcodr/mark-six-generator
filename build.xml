@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+
+<project name="Build mark-six-generator" basedir="." default="testrun" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
+	<property file="build.properties" />
+
+	<property name="lib.ant.dir" location="lib-ant" />
+	<property name="lib.dir" location="lib" />
+	<property name="build.dir" location="build" />
+	<property name="src.java.dir" value="src/java" />
+	<property name="src.resources.dir" value="src/resources" />
+	<property name="dist.dir" location="build/dist" />
+	<property name="dist.lib.dir" location="build/dist" />
+	<property name="classes.dir" location="build/classes" />
+	<property name="resources.dir" value="resources" />
+	<property name="jar.name" value="marksix" />
+	<property name="version.id" value="1.0" />
+	<property name="jdk.version.source" value="1.6" description="JDK version of source code" />
+	<property name="testrun-bin.dir" location="testrun/bin" />
+
+	<property name="resources.dir" value="resources" />
+	<property name="resources.properties.dev.dir" value="${resources.dir}/properties_dev" />
+
+	<path id="maven-ant-tasks.classpath" path="${lib.ant.dir}/maven-ant-tasks-2.1.0.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />	
+		
+	<target name="clean">
+		<delete dir="${dist.dir}" failonerror="false" />
+		<delete dir="${classes.dir}" failonerror="false" />
+		<delete dir="${testrun-bin.dir}" failonerror="false" />
+	</target>
+
+	<target name="init" depends="-check-library">
+		<tstamp />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.lib.dir}" />
+		<mkdir dir="${testrun-bin.dir}" />
+
+		<copy todir="${lib.dir}">
+			<path refid="dependency.classpath" />
+		</copy>		
+
+		<copy todir="${dist.lib.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+				<include name="*.zip" />
+			</fileset>
+		</copy>
+	</target>
+
+	<path id="lib-list">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+			<include name="*.zip" />
+		</fileset>
+	</path>
+
+	<path id="dist-lib-list">
+		<fileset dir="${dist.lib.dir}">
+			<include name="*.jar" />
+			<include name="*.zip" />
+			<exclude name="${jar.name}*.jar" />
+		</fileset>
+	</path>
+	
+	<target name="-check-library">
+		<artifact:dependencies pathId="dependency.classpath">
+			<dependency groupId="log4j" artifactId="log4j" version="1.2.16" />
+		</artifact:dependencies>
+	</target>	
+
+	<target name="compile" depends="init">
+		<javac source="${jdk.version.source}" srcdir="${src.java.dir}" destdir="${classes.dir}" debug="on" debuglevel="lines,vars,source">
+			<classpath refid="lib-list" />
+		</javac>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.java.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar" depends="compile">
+		<manifestclasspath property="manifest-lib-list" jarfile="${dist.dir}/${jar.name}.jar">
+			<classpath refid="dist-lib-list" />
+		</manifestclasspath>
+		<jar destfile="${dist.dir}/${jar.name}.jar">
+			<fileset dir="${classes.dir}" />
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Specification-Title" value="${jar.name}" />
+				<attribute name="Specification-Version" value="${version.id}-${DSTAMP}_${TSTAMP}" />
+				<attribute name="Specification-Vendor" value="CoolCodr" />
+				<attribute name="Implementation-Title" value="${jar.name}" />
+				<attribute name="Implementation-Version" value="${version.id}-${DSTAMP}_${TSTAMP}" />
+				<attribute name="Implementation-Vendor" value="CoolCodr" />
+				<attribute name="Class-Path" value="${manifest-lib-list}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="testrun" depends="jar">
+		<copy todir="${testrun-bin.dir}">
+			<fileset dir="${dist.dir}" />
+		</copy>
+		<copy file="${resources.dir}/log4j.properties" tofile="${testrun-bin.dir}/log4j.properties" overwrite="true" />
+	</target>
+
+</project>

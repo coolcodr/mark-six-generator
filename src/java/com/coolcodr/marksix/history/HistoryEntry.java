@@ -1,12 +1,12 @@
-package com.coolcodr.marksix;
+package com.coolcodr.marksix.history;
 
-public class MarkSixHistory
+public class HistoryEntry
 {
 	private String id;
 	private String date;
 	private int[] numbers;
 
-	public MarkSixHistory(String id, String date, int[] numbers)
+	public HistoryEntry(String id, String date, int[] numbers)
 	{
 		super();
 		this.id = id;

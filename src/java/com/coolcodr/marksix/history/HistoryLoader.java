@@ -1,4 +1,4 @@
-package com.coolcodr.marksix;
+package com.coolcodr.marksix.history;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ public class HistoryLoader
 	.compile("(.*?),\\s(.*?),\\s(\\d*),\\s(\\d*),\\s(\\d*),\\s(\\d*),\\s(\\d*),\\s(\\d*),\\s(\\d*)",
 			Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
-	public void load(Hashtable<String, MarkSixHistory> result, File file) throws IOException
+	public void load(Hashtable<String, HistoryEntry> result, File file) throws IOException
 	{
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -33,7 +33,7 @@ public class HistoryLoader
 				numbers[4] = Integer.parseInt(m.group(7));
 				numbers[5] = Integer.parseInt(m.group(8));
 				numbers[6] = Integer.parseInt(m.group(9));
-				MarkSixHistory history = new MarkSixHistory(id, date, numbers);
+				HistoryEntry history = new HistoryEntry(id, date, numbers);
 				result.put(history.getId(), history);
 			}
 		}

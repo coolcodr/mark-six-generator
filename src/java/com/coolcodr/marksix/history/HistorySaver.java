@@ -1,4 +1,4 @@
-package com.coolcodr.marksix;
+package com.coolcodr.marksix.history;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,14 +10,14 @@ import java.util.Vector;
 
 public class HistorySaver
 {
-	public void save(Hashtable<String, MarkSixHistory> result, File file) throws IOException
+	public void save(Hashtable<String, HistoryEntry> result, File file) throws IOException
 	{
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		Vector<String> v = new Vector<String>(result.keySet());
 		Collections.sort(v);
 		for(String key : v)
 		{
-			MarkSixHistory history = result.get(key);
+			HistoryEntry history = result.get(key);
 			writer.write(history.getId() +", " + history.getDate());
 			for(int i=0;i<7;i++)
 			{

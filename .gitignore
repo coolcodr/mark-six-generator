@@ -3,3 +3,4 @@ testrun/bin
 bin/*
 build
 .DS_Store
+testrun/*.log

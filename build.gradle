@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.5
+repositories { mavenCentral() }
+
+configurations {
+    compile
+    runtime
+    all*.exclude group: 'commons-logging' // this is where we exclude
+}
+
+dependencies {
+    compile 'org.apache.httpcomponents:httpclient:4.1.1'
+    compile 'log4j:log4j:1.2.16'
+}
+
+jar {
+    manifest {
+        def manifestClasspath = configurations.runtime.collect { it.getName() }.join(',')
+        attributes 'Class-Path': manifestClasspath
+    }
+}
+
+task('dist', type: Zip) {
+    dependsOn 'jar'
+    from jar.archivePath
+    from configurations.runtime
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from jar.archivePath
+    from configurations.runtime
+}

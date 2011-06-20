@@ -4,3 +4,4 @@ bin/*
 build
 .DS_Store
 testrun/*.log
+.gradle
